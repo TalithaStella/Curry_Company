@@ -1,6 +1,6 @@
-link: https://curry-company-talithas.streamlit.app/
+link para o projeto: https://curry-company-talithas.streamlit.app/
 
-!! OBS: Este é um projeto feito durante as aulas de Python para dados da Comunidade DS. O modelo de negócio e todos os parâmetros foram escolhidos pelo professor afim de ensinar as principais ferramentas e métodos para resolver problemas de negócio. Com os conhecimentos adquiridos neste projeto aula foram utilizados para criar do zero um projeto próprio (repositório: Fomezero-Zomato).
+!! OBS: Este é um projeto feito durante as aulas de Python para dados da Comunidade DS. O modelo de negócio e todos os parâmetros foram escolhidos pelo professor afim de ensinar as principais ferramentas e métodos para resolver problemas de negócio. Com os conhecimentos adquiridos neste projeto aula foram utilizados para criar do zero um projeto próprio: ([repositório: Fomezero-Zomato](https://github.com/TalithaStella/fomezero_zomato))
 
 <hr>
 # 1. Problema de negócio
