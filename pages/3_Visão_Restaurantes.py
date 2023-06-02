@@ -8,6 +8,7 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import folium
+import datetime
 from haversine import haversine
 from PIL import Image #pip install Image (não PIL)
 from streamlit_folium import folium_static
@@ -74,7 +75,7 @@ def clean_code(df1):
     df1['Delivery_person_Ratings'] = df1['Delivery_person_Ratings'].astype(float)
 
       # Alteração da data
-    df1['Order_Date'] = pd.to_datetime(df1['Order_Date'], format = '%d-%m-%Y')
+    df1['Order_Date'] = pd.to_datetime(df1['Order_Date'], format='%d-%m-%Y').dt.date
 
 
       # Remoção de STR da coluna TEMPO-
@@ -201,10 +202,10 @@ st.sidebar.markdown('## Date Filter')
 
 date_slider = st.sidebar.slider(
     'Select a date:',
-    value=pd.to_datetime(2022, 4, 13), 
-    min_value=pd.to_datetime(2022, 2, 11),
-    max_value=pd.to_datetime(2022, 4, 6),
-    format='DD-MM-YYYY' )
+    value=datetime.datetime(2022, 4, 13).date(), 
+    min_value=datetime.datetime(2022, 2, 11).date(),
+    max_value=datetime.datetime(2022, 4, 6).date()
+)
 
 st.sidebar.markdown("""---""")
 

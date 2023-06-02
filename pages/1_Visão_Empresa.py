@@ -8,6 +8,7 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import folium
+import datetime
 from haversine import haversine
 from PIL import Image #pip install Image (não PIL)
 from streamlit_folium import folium_static
@@ -75,14 +76,16 @@ def clean_code(df1):
     df1['Delivery_person_Ratings'] = df1['Delivery_person_Ratings'].astype(float)
 
       # Alteração da data
-    df1['Order_Date'] = pd.to_datetime(df1['Order_Date'], format = '%d-%m-%Y')
-
+    df1['Order_Date'] = pd.to_datetime(df1['Order_Date'], format='%d-%m-%Y').dt.date
+    
 
       # Remoção de STR da coluna TEMPO-
     df1['Time_taken(min)'] = df1['Time_taken(min)'].apply( lambda x: x.split( '(min) ' )[1] )
     df1['Time_taken(min)'] = df1['Time_taken(min)'].astype(int)
     
     return df1
+
+
 
 df = pd.read_csv('train.csv')
 df1 = clean_code(df)
@@ -129,30 +132,30 @@ def traffic_order_city(df1):
 
 
 # GRÁFICOS EM LINHAS DE SEMANA - VISÃO TÁTICA
-def order_by_week( df1):
-
-    df1['week_of_year'] = df1['Order_Date'].dt.strftime( "%U" )
-    df_aux = df1.loc[:, ['ID', 'week_of_year']].groupby( 'week_of_year' ).count().reset_index()
 
 
-    grf4 = px.line( df_aux, x='week_of_year', y='ID' ) 
 
-    return grf4
+def order_by_week(df1):
+    df_aux = df1.copy()
+    df_aux['Order_Date'] = pd.to_datetime(df_aux['Order_Date'], format='%Y-%m-%d')
+    df_aux['week_of_year'] = df_aux['Order_Date'].dt.strftime('%U')
+    df_aux = df_aux.groupby('week_of_year').size().reset_index(name='count')
+    fig = px.line(df_aux, x='week_of_year', y='count')
+    return fig
+
+
 
 
 # GRÁFICOS EM LINHAS DE SEMANA - VISÃO TÁTICA
-def delivery_by_week( df1):
-
-    df_aux1 = df1.loc[:, ['ID', 'week_of_year']].groupby( 'week_of_year' ).count().reset_index()
-    df_aux2 = df1.loc[:, ['Delivery_person_ID', 'week_of_year']].groupby( 'week_of_year').nunique().reset_index()
-
-    df_aux = pd.merge( df_aux1, df_aux2, how='inner' )
-    df_aux['order_by_delivery'] = df_aux['ID'] / df_aux['Delivery_person_ID']
 
 
-    grf5 = px.line( df_aux, x='week_of_year', y='order_by_delivery' )
-
-    return grf5
+def delivery_by_week(df1):
+    df_aux1 = df1.copy()
+    df_aux1['Order_Date'] = pd.to_datetime(df_aux1['Order_Date'], format='%Y-%m-%d')
+    df_aux1['week_of_year'] = df_aux1['Order_Date'].dt.strftime('%U')
+    df_aux1 = df_aux1.loc[:, ['ID', 'week_of_year']].groupby('week_of_year').count().reset_index()
+    fig = px.line(df_aux1, x='week_of_year', y='ID')
+    return fig
 
 
 # GRÁFICO DE MAPA
@@ -192,10 +195,12 @@ st.sidebar.markdown('## Date Filter')
 
 date_slider = st.sidebar.slider(
     'Select a date:',
-    value=pd.to_datetime(2022, 4, 13), 
-    min_value=pd.to_datetime(2022, 2, 11),
-    max_value=pd.to_datetime(2022, 4, 6),
-    format='DD-MM-YYYY' )
+    value=datetime.datetime(2022, 4, 13).date(), 
+    min_value=datetime.datetime(2022, 2, 11).date(),
+    max_value=datetime.datetime(2022, 4, 6).date()
+)
+
+
 
 st.sidebar.markdown("""---""")
 
@@ -209,10 +214,6 @@ traffic_options = st.sidebar.multiselect(
 st.sidebar.markdown("""---""") 
 st.sidebar.markdown("### Powered by Comunidade DS.")
 st.sidebar.markdown("###### Talitha Oliveira")
-
-
-
-
 
 
 datas_sel = df1['Order_Date'] < date_slider
@@ -293,5 +294,4 @@ with tab3:
     map_ = country_map(df1)
     
     
-
 
